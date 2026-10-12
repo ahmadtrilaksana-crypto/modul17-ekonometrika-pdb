@@ -185,6 +185,46 @@ st.markdown(
     .stTabs [data-baseweb="tab-highlight"] {
         display: none !important;
     }
+    /* RESPONSIVE METRIC TICKERS (MENCEGAH TEKS TERPOTONG DI DESKTOP MAUPUN HP) */
+    [data-testid="stMetric"] {
+        background: rgba(15, 23, 42, 0.75) !important;
+        padding: 8px 12px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        color: #94a3b8 !important;
+        white-space: nowrap !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: 1.12rem !important;
+        font-weight: 800 !important;
+        color: #f8fafc !important;
+        white-space: nowrap !important;
+    }
+    [data-testid="stMetricDelta"] {
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+    }
+    @media (max-width: 768px) {
+        [data-testid="stMetric"] {
+            padding: 6px 8px !important;
+        }
+        [data-testid="stMetricLabel"] {
+            font-size: 0.70rem !important;
+        }
+        [data-testid="stMetricValue"] {
+            font-size: 0.92rem !important;
+        }
+        [data-testid="stMetricDelta"] {
+            font-size: 0.68rem !important;
+        }
+        .main-header h1 {
+            font-size: 1.15rem !important;
+        }
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -224,8 +264,9 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 default_csv = os.path.join(base_dir, "data", "data_makro_indonesia_pdb.csv")
 active_period_str = live_feed.get("active_period_label", "2026Q3")
 
-col_btn_live, col_yr_pick, col_q1, col_q2, col_q3, col_q4, col_q5 = st.columns([1.15, 1.35, 0.95, 0.95, 0.95, 0.95, 0.95])
-with col_btn_live:
+# ROW 1: KONTROL UPDATE LIVE & PILIHAN TAHUN TARGET
+row1_col1, row1_col2 = st.columns([1.2, 2.5])
+with row1_col1:
     if st.button("🔄 Update Data Live", use_container_width=True, type="primary"):
         new_feed = fetch_live_macro_commodity_quotes()
         st.session_state["live_feed"] = new_feed
@@ -239,7 +280,7 @@ with col_btn_live:
         st.rerun()
     st.caption(f"Live Harga, RKAB & Auto-Roll ({active_period_str}).")
 
-with col_yr_pick:
+with row1_col2:
     year_options = [2025, 2026, 2027, 2028, 2029, 2030]
     year_labels = {
         2025: "2025 (Trial Backtest vs Aktual)",
@@ -258,6 +299,9 @@ with col_yr_pick:
         format_func=lambda y: year_labels[y],
         help="Pilih tahun 2025 untuk menguji akurasi model terhadap data aktual BPS, tahun 2029 untuk Target Akselerasi Pertumbuhan 8,00% (RPJMN), atau tahun 2026 s/d 2030.",
     )
+
+# ROW 2: 5 KARTU INDIKATOR HARGA & MAKRO REAL-TIME (LEBAR & RESPONSIVE)
+col_q1, col_q2, col_q3, col_q4, col_q5 = st.columns(5)
 
 col_q1.metric(
     "💵 Kurs USD/IDR",
